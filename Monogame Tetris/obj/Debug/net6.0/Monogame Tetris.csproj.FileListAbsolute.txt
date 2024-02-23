@@ -1,0 +1,30 @@
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.csproj.AssemblyReference.cache
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.AssemblyInfoInputs.cache
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.AssemblyInfo.cs
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.csproj.CoreCompileInputs.cache
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\block.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Monogame Tetris.exe
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Monogame Tetris.deps.json
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Monogame Tetris.runtimeconfig.json
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Monogame Tetris.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Monogame Tetris.pdb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\MonoGame.Framework.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\linux-x64\native\libSDL2-2.0.so.0
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\linux-x64\native\libopenal.so.1
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\osx\native\libSDL2.dylib
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\osx\native\libopenal.1.dylib
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\win-x64\native\SDL2.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\win-x64\native\soft_oal.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\win-x86\native\SDL2.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\runtimes\win-x86\native\soft_oal.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.csproj.CopyComplete
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\refint\Monogame Tetris.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.pdb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\Monogame Tetris.genruntimeconfig.cache
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\obj\Debug\net6.0\ref\Monogame Tetris.dll
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\tetris music.ogg
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\tetris music.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\default font.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\purpleCastleBackground.xnb

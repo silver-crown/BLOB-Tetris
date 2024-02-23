@@ -1,0 +1,5 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/block.png","C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/bin/DesktopGL/block.xnb","TextureProcessor","Texture2DContent",385,7301,0.1660271
+"C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/default font.spritefont","C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/bin/DesktopGL/default font.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21535,0.2341714
+"C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/purpleCastleBackground.png","C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/bin/DesktopGL/purpleCastleBackground.xnb","TextureProcessor","Texture2DContent",1401778,3145813,0.2604162
+"C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/tetris music.mp3","C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/bin/DesktopGL/tetris music.xnb","SongProcessor","SongContent",4701255,130,3.3032818

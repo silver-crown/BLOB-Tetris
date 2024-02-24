@@ -4,21 +4,23 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Monogame_Tetris
 {
     public class TetrisGame : Game
     {
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
-        private int BlockSize = 40;
+        private Effect glowEffect;
+        private float BlockSize = 40.0f;
         private const int BoardWidth = 10;
         private const int BoardHeight = 20;
         private int linesCleared = 0;
         private int playerScore = 0;
-
-        private int[,] gameBoard;
+        private GameBoardCell[,] gameBoard;
         private List<Vector2> currentPiece;
         private List<Vector2> nextPiece;
         private List<Vector2> storedPiece;
@@ -27,7 +29,7 @@ namespace Monogame_Tetris
         private Color storedPieceColor;
         private Vector2 currentPiecePosition;
         private float fallTime = 0f;
-        private const float FallSpeed = 0.5f;
+        private  float FallSpeed = 0.5f;
         private Texture2D blockTexture;
         private Texture2D backgroundImage;
         private bool spacePressedLastFrame = false;
@@ -40,6 +42,7 @@ namespace Monogame_Tetris
         private bool alreadyStoredAPiece = false;
         private bool storedPieceNotNull = false; 
         private Random random;
+        private int level = 1;
 
         private Color[] pieceColors = new Color[]
         {
@@ -57,12 +60,17 @@ namespace Monogame_Tetris
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             // Set the window size based on the board size and block size
-            _graphics.PreferredBackBufferWidth = BoardWidth * BlockSize * 2;
-            _graphics.PreferredBackBufferHeight = BoardHeight * BlockSize + 20;
+            _graphics.PreferredBackBufferWidth = (int)(BoardWidth * BlockSize * 2);
+            _graphics.PreferredBackBufferHeight = (int)(BoardHeight * BlockSize + 20);
         }
 
         protected override void Initialize() {
-            gameBoard = new int[BoardWidth, BoardHeight];
+            gameBoard = new GameBoardCell[BoardWidth, BoardHeight];
+            for (int x = 0; x < BoardWidth; x++) {
+                for (int y = 0; y < BoardHeight; y++) {
+                    gameBoard[x, y] = new GameBoardCell();
+                }
+            }
             currentPiece = new List<Vector2>();
             currentPiecePosition = new Vector2(4, 0); // Starting position of the piece
             random = new Random();
@@ -78,6 +86,25 @@ namespace Monogame_Tetris
             MediaPlayer.IsRepeating = true; // Set to true if you want the music to loop
             blockTexture = Content.Load<Texture2D>("block");
             backgroundImage = Content.Load<Texture2D>("purpleCastleBackground");
+
+            //loading the glow effect
+            glowEffect = Content.Load<Effect>("GlowEffect");
+
+            // Assuming gameBoard is a 2D array of GameBoardCell
+            //Vector4[] flattenedGameBoard = gameBoard.Cast<GameBoardCell>().Select(cell => SampleTexture(blockTexture, new Vector2(0.5f, 0.5f))).ToArray();
+           // glowEffect.Parameters["gameBoard"].SetValue(flattenedGameBoard);
+            //glowEffect.Parameters["BlockSize"].SetValue(BlockSize); // Assuming BlockSize is a float variable
+
+            // Add a helper method to sample the texture
+            /*static Vector4 SampleTexture(Texture2D texture, Vector2 uv) {
+                Color[] data = new Color[1];
+                if(texture != null) {
+                    texture.GetData(0, new Rectangle((int)(uv.X * texture.Width), (int)(uv.Y * texture.Height), 1, 1), data, 0, 1);
+                }
+                return new Vector4(data[0].R / 255f, data[0].G / 255f, data[0].B / 255f, data[0].A / 255f);
+            }
+            */
+
             ShowNextPiece();
             SpawnNewPiece();
         }
@@ -94,6 +121,7 @@ namespace Monogame_Tetris
             }
 
             ProcessInput();
+            LevelLogic();
 
             base.Update(gameTime);
         }
@@ -121,6 +149,32 @@ namespace Monogame_Tetris
             spacePressedLastFrame = state.IsKeyDown(Keys.Space);
         }
 
+        //logic for moving to the next level and increasing fallspeed
+        void LevelLogic() {
+            switch (linesCleared) {
+                default:
+                    FallSpeed = 0.2f;
+                    break;
+                case var _ when linesCleared > 5:
+                    FallSpeed = 0.4f;
+                    level = 2;
+                    break;
+                case var _ when linesCleared > 10:
+                    FallSpeed = 0.3f;
+                    level = 3;
+                    break;
+                case var _ when linesCleared > 15:
+                    FallSpeed = 0.2f;
+                    level = 4;
+                    break;
+                case var _ when linesCleared > 20:
+                    FallSpeed = 0.1f;
+                    level = 5;
+                    break;
+
+            }
+        }
+
         private void MovePiece(int xOffset, int yOffset) {
             Vector2 newPosition = currentPiecePosition + new Vector2(xOffset, yOffset);
 
@@ -145,6 +199,7 @@ namespace Monogame_Tetris
         }
 
         private void RotatePiece() {
+            FallSpeed += 0.1f;
             List<Vector2> rotatedPiece = new List<Vector2>();
 
 
@@ -206,8 +261,10 @@ namespace Monogame_Tetris
                 int y = (int)block.Y + (int)currentPiecePosition.Y;
 
                 // Check if the cell is not already occupied before locking
-                if (x >= 1 && x < BoardWidth && y >= 0 && y < BoardHeight && gameBoard[x, y] == 0) {
-                    gameBoard[x, y] = currentPieceType + 1; // Use currentPieceType + 1 as the value for the piece type
+                if (x >= 1 && x < BoardWidth && y >= 0 && y < BoardHeight && gameBoard[x, y].PieceType == 0) {
+                    gameBoard[x, y].PieceType = currentPieceType + 1; // Use currentPieceType + 1 as the value for the piece type
+                    // Set ShouldGlow for locked pieces
+                    gameBoard[x, y].ShouldGlow = true;
                 }
             }
             
@@ -219,23 +276,31 @@ namespace Monogame_Tetris
                 bool lineIsFull = true;
 
                 for (int x = 1; x < BoardWidth; x++) {
-                    if (gameBoard[x, y] == 0) {
+                    if (gameBoard[x, y].PieceType == 0) {
                         lineIsFull = false;
                         break;
                     }
                 }
 
                 if (lineIsFull) {
+
+                    //Make line glow
+                    for (int x = 1; x < BoardWidth; x++) {
+                        if (gameBoard[x, y].PieceType > 0) {
+                            gameBoard[x, y].ShouldGlow = true;
+                        }
+                    }
+
                     // Clear the line
                     for (int newY = y; newY > 0; newY--) {
                         for (int x = 0; x < BoardWidth; x++) {
-                            gameBoard[x, newY] = gameBoard[x, newY - 1];
+                            gameBoard[x, newY].PieceType = gameBoard[x, newY - 1].PieceType;
                         }
                     }
 
                     // Add a new empty line at the top
                     for (int x = 1; x < BoardWidth; x++) {
-                        gameBoard[x, 0] = 0;
+                        gameBoard[x, 0].PieceType = 0;
                     }
 
                     // Check the same line again
@@ -302,7 +367,7 @@ namespace Monogame_Tetris
             foreach (var block in piece) {
                 int x = (int)block.X + (int)position.X;
                 int y = (int)block.Y + (int)position.Y;
-                if (x < 1 || x >= BoardWidth || y >= BoardHeight || (y >= 0 && gameBoard[x, y] > 0)) {
+                if (x < 1 || x >= BoardWidth || y >= BoardHeight || (y >= 0 && gameBoard[x, y].PieceType > 0)) {
                     return false; // Collision with the game board or boundaries
                 }
             }
@@ -324,8 +389,8 @@ namespace Monogame_Tetris
             // Draw the game board
             for (int x = 1; x < BoardWidth; x++) {
                 for (int y = 0; y < BoardHeight; y++) {
-                    int cellValue = gameBoard[x, y];
-                    if (cellValue > 0) {
+                    int cellValue = gameBoard[x, y].PieceType;
+                        if (cellValue > 0) {
                         // Use cellValue - 1 to index into pieceColors array
                         _spriteBatch.Draw(
                             texture: blockTexture,
@@ -412,9 +477,15 @@ namespace Monogame_Tetris
               $"Score: " + playerScore,
               new Vector2(600 + BoardWidth, BoardHeight + 50),
               Color.White);
+            //Draw the current level
+            _spriteBatch.DrawString(
+              Content.Load<SpriteFont>("default font"),
+              $"Level: " + level,
+              new Vector2(600 + BoardWidth, BoardHeight + 25),
+              Color.White);
 
             //Draw number of lines cleared
-             _spriteBatch.DrawString(
+            _spriteBatch.DrawString(
               Content.Load<SpriteFont>("default font"),
               $"Lines cleared: " + linesCleared,
               new Vector2(600 + BoardWidth, BoardHeight + 100),

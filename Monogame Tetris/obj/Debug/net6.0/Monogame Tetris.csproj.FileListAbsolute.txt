@@ -28,3 +28,4 @@ C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Con
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\tetris music.xnb
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\default font.xnb
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\purpleCastleBackground.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\GlowEffect.xnb

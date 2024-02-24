@@ -32,6 +32,12 @@
 /processorParam:TextureFormat=Compressed
 /build:default font.spritefont
 
+#begin GlowEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:GlowEffect.fx
+
 #begin purpleCastleBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor

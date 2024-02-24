@@ -15,7 +15,8 @@ namespace Monogame_Tetris
         private int BlockSize = 40;
         private const int BoardWidth = 10;
         private const int BoardHeight = 20;
-
+        private int linesCleared = 0;
+        private int playerScore = 0;
 
         private int[,] gameBoard;
         private List<Vector2> currentPiece;
@@ -146,6 +147,14 @@ namespace Monogame_Tetris
         private void RotatePiece() {
             List<Vector2> rotatedPiece = new List<Vector2>();
 
+
+            // Compute the center of the piece
+            Vector2 center = currentPiecePosition + new Vector2(1.5f, 1.5f);
+            if (currentPieceType == 1) // If it's a square piece, don't rotate
+    {
+                rotatedPiece = currentPiece;
+                return;
+            }
             foreach (var block in currentPiece) {
                 // Rotate the block around the center of the piece
                 Vector2 relativePosition = block - new Vector2(1.5f, 1.5f);
@@ -157,6 +166,37 @@ namespace Monogame_Tetris
 
             if (IsMoveValid(currentPiecePosition, rotatedPiece)) {
                 currentPiece = rotatedPiece;
+            }
+
+            // Special handling for the line piece
+            if (currentPieceType == 0) {
+                // Attempt additional wall kicks for the line piece
+                int[] lineKicksX = { 0, 1, -1, 2, -2 }; // Adjust these values based on your needs
+                int[] lineKicksY = { 0, 1, -1, 2, -2 }; // Adjust these values based on your needs
+
+                for (int i = 0; i < lineKicksX.Length; i++) {
+                    Vector2 kick = new Vector2(lineKicksX[i], lineKicksY[i]);
+
+                    if (IsMoveValid(currentPiecePosition + kick, rotatedPiece)) {
+                        currentPiece = rotatedPiece;
+                        currentPiecePosition += kick;
+                        return;
+                    }
+                }
+            }
+
+            // Attempt wall kicks
+            int[] wallKicksX = { 0, 1, -1, 2, -2 }; // Adjust these values based on your needs
+            int[] wallKicksY = { 0, 1, -1, 2, -2 }; // Adjust these values based on your needs
+
+            for (int i = 0; i < wallKicksX.Length; i++) {
+                Vector2 kick = new Vector2(wallKicksX[i], wallKicksY[i]);
+
+                if (IsMoveValid(currentPiecePosition + kick, rotatedPiece)) {
+                    currentPiece = rotatedPiece;
+                    currentPiecePosition += kick;
+                    return;
+                }
             }
         }
 
@@ -174,6 +214,7 @@ namespace Monogame_Tetris
         }
 
         private void ClearLines() {
+            int cleared = 0;
             for (int y = BoardHeight - 1; y >= 0; y--) {
                 bool lineIsFull = true;
 
@@ -199,7 +240,21 @@ namespace Monogame_Tetris
 
                     // Check the same line again
                     y++;
+                    linesCleared++;
+                    cleared++;
                 }
+            }
+            switch (cleared){
+                default:
+                    break;
+                case 1: playerScore += 40;
+                    break;
+                case 2: playerScore += 100;
+                    break;
+                case 3: playerScore += 300;
+                    break;
+                case 4: playerScore += 1200;
+                    break;
             }
         }
 
@@ -321,6 +376,12 @@ namespace Monogame_Tetris
                     color: currentPieceColor);
             }
 
+            //Draw the text for the next piece
+            _spriteBatch.DrawString(
+               Content.Load<SpriteFont>("default font"),
+               $"NEXT",
+               new Vector2(650 + BoardWidth, BoardHeight + 300),
+               Color.White);
             //Draw the next piece
             foreach (var block in nextPiece) {
                 _spriteBatch.Draw(
@@ -329,7 +390,13 @@ namespace Monogame_Tetris
                     color: nextPieceColor);
             }
 
-            if(storedPiece != null) {
+            //Draw the text for the saved/stored piece
+            _spriteBatch.DrawString(
+               Content.Load<SpriteFont>("default font"),
+               $"SAVED",
+               new Vector2(650 + BoardWidth, BoardHeight + 530),
+               Color.White);
+            if (storedPiece != null) {
                 //Draw the stored piece
                 foreach (var block in storedPiece) {
                     _spriteBatch.Draw(
@@ -339,17 +406,21 @@ namespace Monogame_Tetris
                 }
             }
 
+            //Draw the player score
             _spriteBatch.DrawString(
-               Content.Load<SpriteFont>("default font"),
-               $"NEXT",
-               new Vector2(650+ BoardWidth, BoardHeight + 300),
-               Color.White);
+              Content.Load<SpriteFont>("default font"),
+              $"Score: " + playerScore,
+              new Vector2(600 + BoardWidth, BoardHeight + 50),
+              Color.White);
 
-            _spriteBatch.DrawString(
-               Content.Load<SpriteFont>("default font"),
-               $"SAVED",
-               new Vector2(650 + BoardWidth, BoardHeight + 530),
-               Color.White);
+            //Draw number of lines cleared
+             _spriteBatch.DrawString(
+              Content.Load<SpriteFont>("default font"),
+              $"Lines cleared: " + linesCleared,
+              new Vector2(600 + BoardWidth, BoardHeight + 100),
+              Color.White);
+
+         
 
             _spriteBatch.End();
 

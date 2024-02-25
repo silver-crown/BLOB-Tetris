@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Monogame_Tetris
 {
-    internal class GameBoardCell
+    public class GameBoardCell
     {
         public Texture2D cellTexture; 
         public int PieceType { get; set; } // 0 for empty, 1 for piece type 1, etc.

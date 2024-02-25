@@ -11,8 +11,7 @@ namespace Monogame_Tetris
 {
     internal class TetrisBlock
     {
-        private Texture2D blockTexture;
-        private Vector2 blockPosition;
+        public TetrisBlock(Random r) => Init(r);
         private List<Microsoft.Xna.Framework.Vector2> blockShape;
         private Microsoft.Xna.Framework.Color[] pieceColors = new Microsoft.Xna.Framework.Color[]
           {

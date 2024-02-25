@@ -29,3 +29,7 @@ C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Con
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\default font.xnb
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\purpleCastleBackground.xnb
 C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\GlowEffect.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\BlackFadeEffect.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\drOakperfect.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\drOakwell-done.xnb
+C:\Users\13sti\source\repos\Monogame Tetris\Monogame Tetris\bin\Debug\net6.0\Content\drOakwonderful.xnb

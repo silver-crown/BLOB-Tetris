@@ -4,13 +4,21 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/BlackFadeEffect.fx</File>
     <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/block.png</File>
     <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/default font.spritefont</File>
+    <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/drOakperfect.mp3</File>
+    <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/drOakwell-done.mp3</File>
+    <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/drOakwonderful.mp3</File>
     <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/GlowEffect.fx</File>
     <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/purpleCastleBackground.png</File>
     <File>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/tetris music.mp3</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

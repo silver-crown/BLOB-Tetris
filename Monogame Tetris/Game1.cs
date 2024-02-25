@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -14,7 +15,8 @@ namespace Monogame_Tetris
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Effect glowEffect;
+        private Effect glowEffect; //currently not in use
+        private Effect blackFadeEffect;
         private float BlockSize = 40.0f;
         private const int BoardWidth = 10;
         private const int BoardHeight = 20;
@@ -30,6 +32,8 @@ namespace Monogame_Tetris
         private Vector2 currentPiecePosition;
         private float fallTime = 0f;
         private  float FallSpeed = 0.5f;
+        private float spawnTime = 1f;
+        private float timeSinceLastSpawn = 0f;
         private Texture2D blockTexture;
         private Texture2D backgroundImage;
         private bool spacePressedLastFrame = false;
@@ -38,11 +42,18 @@ namespace Monogame_Tetris
         private int currentPieceType;
         private int storedPieceType;
         private Song tetrisMusic;
+        private SoundEffect drOakWonderful;
+        private SoundEffect drOakWellDone;
+        private SoundEffect drOakPerfect;
         TetrisBlock currentTetrisBlock;
         private bool alreadyStoredAPiece = false;
         private bool storedPieceNotNull = false; 
         private Random random;
         private int level = 1;
+        private float _amount = 0f;
+        private float _dir = -1f;
+        private bool lineIsGlowing;
+        private int loopCount = 0; // the amount of times you want the piece to glow before moving on
 
         private Color[] pieceColors = new Color[]
         {
@@ -81,29 +92,20 @@ namespace Monogame_Tetris
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             // Load the Tetris music
-            tetrisMusic = Content.Load<Song>("tetris music"); 
+            tetrisMusic = Content.Load<Song>("tetris music");
+            drOakWonderful = Content.Load<SoundEffect>("drOakWonderful");
+            drOakWellDone = Content.Load<SoundEffect>("drOakwell-done");
+            drOakPerfect = Content.Load<SoundEffect>("drOakPerfect");
             MediaPlayer.Play(tetrisMusic);
+            MediaPlayer.Volume = 0.5f; // Set the volume to 50%
             MediaPlayer.IsRepeating = true; // Set to true if you want the music to loop
             blockTexture = Content.Load<Texture2D>("block");
             backgroundImage = Content.Load<Texture2D>("purpleCastleBackground");
 
             //loading the glow effect
             glowEffect = Content.Load<Effect>("GlowEffect");
-
-            // Assuming gameBoard is a 2D array of GameBoardCell
-            //Vector4[] flattenedGameBoard = gameBoard.Cast<GameBoardCell>().Select(cell => SampleTexture(blockTexture, new Vector2(0.5f, 0.5f))).ToArray();
-           // glowEffect.Parameters["gameBoard"].SetValue(flattenedGameBoard);
-            //glowEffect.Parameters["BlockSize"].SetValue(BlockSize); // Assuming BlockSize is a float variable
-
-            // Add a helper method to sample the texture
-            /*static Vector4 SampleTexture(Texture2D texture, Vector2 uv) {
-                Color[] data = new Color[1];
-                if(texture != null) {
-                    texture.GetData(0, new Rectangle((int)(uv.X * texture.Width), (int)(uv.Y * texture.Height), 1, 1), data, 0, 1);
-                }
-                return new Vector4(data[0].R / 255f, data[0].G / 255f, data[0].B / 255f, data[0].A / 255f);
-            }
-            */
+            //load the black fade effect
+            blackFadeEffect = Content.Load<Effect>("BlackFadeEffect");
 
             ShowNextPiece();
             SpawnNewPiece();
@@ -111,16 +113,40 @@ namespace Monogame_Tetris
 
         protected override void Update(GameTime gameTime) {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            fallTime += deltaTime;
-            timeSinceLastMovement += deltaTime;
-
-            if (fallTime >= FallSpeed) {
-                MovePieceDown();
-                fallTime = 0f;
+            
+            GlowLines();
+            if (lineIsGlowing) {
+                _amount += deltaTime * _dir;
+                if(_amount < 0 || _amount > 0.15) {
+                    _dir *= -1;
+                    if(loopCount <= 3) {
+                        loopCount++;
+                    }
+                }
+                if(loopCount >=3){
+                    ClearLines();
+                    for (int y = BoardHeight - 1; y >= 0; y--) {
+                        for (int x = 1; x < BoardWidth; x++) {
+                            gameBoard[x, y].ShouldGlow = false;
+                        }
+                    }
+                    lineIsGlowing = false;
+                    loopCount = 0;
+                    _amount = 0;
+                    _dir = -1;
+                }
             }
-
-            ProcessInput();
+            glowEffect.Parameters["amount"].SetValue(_amount);
+                fallTime += deltaTime;
+                timeSinceLastMovement += deltaTime;
+                timeSinceLastSpawn += deltaTime;
+                if (fallTime >= FallSpeed && !lineIsGlowing) {
+                    MovePieceDown();
+                    fallTime = 0f;
+                }
+            if(!lineIsGlowing)
+                ProcessInput();
+            
             LevelLogic();
 
             base.Update(gameTime);
@@ -129,18 +155,16 @@ namespace Monogame_Tetris
         private void ProcessInput() {
             KeyboardState state = Keyboard.GetState();
 
-            if (state.IsKeyDown(Keys.Left) && timeSinceLastMovement >= movementCooldown) {
+            if ((state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.A) && timeSinceLastMovement >= movementCooldown)) {
                 MovePiece(-1, 0);
                 timeSinceLastMovement = 0f;
             }
-            else if (state.IsKeyDown(Keys.Right) && timeSinceLastMovement >= movementCooldown) {
+            else if ((state.IsKeyDown(Keys.Right) || state.IsKeyDown(Keys.D) && timeSinceLastMovement >= movementCooldown)) {
                 MovePiece(1, 0);
                 timeSinceLastMovement = 0f;
             }
-            else if (state.IsKeyDown(Keys.Down))
+            else if (state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.S))
                 MovePieceDown();
-            else if (state.IsKeyDown(Keys.Up))
-                MovePiece(0, 1);
             else if (state.IsKeyDown(Keys.Space) && !spacePressedLastFrame)
                 RotatePiece();
             else if (state.IsKeyDown(Keys.E) && !alreadyStoredAPiece) {
@@ -153,23 +177,23 @@ namespace Monogame_Tetris
         void LevelLogic() {
             switch (linesCleared) {
                 default:
-                    FallSpeed = 0.2f;
+                    FallSpeed = 0.5f;
                     break;
-                case var _ when linesCleared > 5:
-                    FallSpeed = 0.4f;
-                    level = 2;
+                case var _ when linesCleared >= 20:
+                    FallSpeed = 0.07f;
+                    level = 5;
                     break;
-                case var _ when linesCleared > 10:
-                    FallSpeed = 0.3f;
-                    level = 3;
-                    break;
-                case var _ when linesCleared > 15:
-                    FallSpeed = 0.2f;
+                case var _ when linesCleared >= 15:
+                    FallSpeed = 0.1f;
                     level = 4;
                     break;
-                case var _ when linesCleared > 20:
-                    FallSpeed = 0.1f;
-                    level = 5;
+                case var _ when linesCleared >= 10:
+                    FallSpeed = 0.2f;
+                    level = 3;
+                    break;
+                case var _ when linesCleared >= 5:
+                    FallSpeed = 0.3f;
+                    level = 2;
                     break;
 
             }
@@ -192,7 +216,6 @@ namespace Monogame_Tetris
             else {
                 // Lock the piece in place
                 LockPiece();
-                ClearLines();
                 alreadyStoredAPiece = false;
                 SpawnNewPiece();
             }
@@ -263,13 +286,36 @@ namespace Monogame_Tetris
                 // Check if the cell is not already occupied before locking
                 if (x >= 1 && x < BoardWidth && y >= 0 && y < BoardHeight && gameBoard[x, y].PieceType == 0) {
                     gameBoard[x, y].PieceType = currentPieceType + 1; // Use currentPieceType + 1 as the value for the piece type
-                    // Set ShouldGlow for locked pieces
-                    gameBoard[x, y].ShouldGlow = true;
+                    //Set ShouldGlow for locked pieces
+                    //gameBoard[x, y].ShouldGlow = true;
+                    //pieceIsGlowing = true;
                 }
             }
             
         }
 
+        //apply glow on lines about to be cleared
+        private void GlowLines() {
+            //Make line glow
+            for (int y = BoardHeight - 1; y >= 0; y--) {
+                bool lineIsFull = true;
+
+                for (int x = 1; x < BoardWidth; x++) {
+                    if (gameBoard[x, y].PieceType == 0) {
+                        lineIsFull = false;
+                        break;
+                    }
+                }
+                    if (lineIsFull) {
+                        for (int x = 1; x < BoardWidth; x++) {
+                            if (gameBoard[x, y].PieceType > 0) {
+                                gameBoard[x, y].ShouldGlow = true;
+                            }
+                        }
+                    lineIsGlowing = true;
+                    }
+            }
+        }
         private void ClearLines() {
             int cleared = 0;
             for (int y = BoardHeight - 1; y >= 0; y--) {
@@ -281,46 +327,46 @@ namespace Monogame_Tetris
                         break;
                     }
                 }
-
                 if (lineIsFull) {
-
-                    //Make line glow
-                    for (int x = 1; x < BoardWidth; x++) {
-                        if (gameBoard[x, y].PieceType > 0) {
-                            gameBoard[x, y].ShouldGlow = true;
-                        }
-                    }
-
                     // Clear the line
-                    for (int newY = y; newY > 0; newY--) {
-                        for (int x = 0; x < BoardWidth; x++) {
-                            gameBoard[x, newY].PieceType = gameBoard[x, newY - 1].PieceType;
+                        for (int newY = y; newY > 0; newY--) {
+                            for (int x = 0; x < BoardWidth; x++) {
+                                gameBoard[x, newY].PieceType = gameBoard[x, newY - 1].PieceType;
+                            }
                         }
-                    }
 
-                    // Add a new empty line at the top
-                    for (int x = 1; x < BoardWidth; x++) {
-                        gameBoard[x, 0].PieceType = 0;
-                    }
+                        // Add a new empty line at the top
+                        for (int x = 1; x < BoardWidth; x++) {
+                            gameBoard[x, 0].PieceType = 0;
+                        }
 
-                    // Check the same line again
-                    y++;
-                    linesCleared++;
-                    cleared++;
+                        // Check the same line again
+                        y++;
+                        linesCleared++;
+                        cleared++;
                 }
+               
             }
             switch (cleared){
                 default:
                     break;
                 case 1: playerScore += 40;
+                    PlayOakSoundEffect(drOakWonderful);
                     break;
                 case 2: playerScore += 100;
+                    PlayOakSoundEffect(drOakWonderful);
                     break;
                 case 3: playerScore += 300;
+                    PlayOakSoundEffect(drOakWellDone);
                     break;
                 case 4: playerScore += 1200;
+                    PlayOakSoundEffect(drOakPerfect);
                     break;
             }
+        }
+
+        void PlayOakSoundEffect(SoundEffect s) {
+            s.Play(volume: 1f, pitch: 0.0f, pan: 0.0f);
         }
 
         private void SpawnNewPiece() {
@@ -385,17 +431,34 @@ namespace Monogame_Tetris
                 texture: backgroundImage,
                 position: new Vector2(1, 1),
                 color: Color.White);
-
             // Draw the game board
             for (int x = 1; x < BoardWidth; x++) {
                 for (int y = 0; y < BoardHeight; y++) {
                     int cellValue = gameBoard[x, y].PieceType;
                         if (cellValue > 0) {
-                        // Use cellValue - 1 to index into pieceColors array
-                        _spriteBatch.Draw(
-                            texture: blockTexture,
-                            position: new Vector2(x * BlockSize, y * BlockSize),
-                            color: pieceColors[cellValue - 1]); // Use pieceColors array for landed pieces
+               
+                        
+                        if (gameBoard[x, y].ShouldGlow ) {
+                            _spriteBatch.End();
+                            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, effect: glowEffect);
+                            // Apply the shader
+                            glowEffect.CurrentTechnique.Passes[0].Apply();
+
+                            _spriteBatch.Draw(
+                                texture: blockTexture,
+                                position: new Vector2(x * BlockSize, y * BlockSize),
+                                color: pieceColors[cellValue - 1]); // Use pieceColors array for landed pieces
+                            _spriteBatch.End();
+                            _spriteBatch.Begin();
+                        }
+                        else {
+                            // Use cellValue - 1 to index into pieceColors array
+                            _spriteBatch.Draw(
+                                texture: blockTexture,
+                                position: new Vector2(x * BlockSize, y * BlockSize),
+                                color: pieceColors[cellValue - 1]); // Use pieceColors array for landed pieces
+
+                        }
                     }
                 }
             }
@@ -454,7 +517,6 @@ namespace Monogame_Tetris
                     position: new Vector2((block.X + BoardWidth + 5) * BlockSize, (block.Y + BoardHeight - 10) * BlockSize),
                     color: nextPieceColor);
             }
-
             //Draw the text for the saved/stored piece
             _spriteBatch.DrawString(
                Content.Load<SpriteFont>("default font"),
@@ -462,6 +524,7 @@ namespace Monogame_Tetris
                new Vector2(650 + BoardWidth, BoardHeight + 530),
                Color.White);
             if (storedPiece != null) {
+     
                 //Draw the stored piece
                 foreach (var block in storedPiece) {
                     _spriteBatch.Draw(
@@ -491,10 +554,11 @@ namespace Monogame_Tetris
               new Vector2(600 + BoardWidth, BoardHeight + 100),
               Color.White);
 
-         
+
+
+       
 
             _spriteBatch.End();
-
             base.Draw(gameTime);
         }
         protected override void UnloadContent() {

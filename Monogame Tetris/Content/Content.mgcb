@@ -13,6 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin BlackFadeEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:BlackFadeEffect.fx
+
 #begin block.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -31,6 +37,24 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:default font.spritefont
+
+#begin drOakperfect.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:drOakperfect.mp3
+
+#begin drOakwell-done.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:drOakwell-done.mp3
+
+#begin drOakwonderful.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:drOakwonderful.mp3
 
 #begin GlowEffect.fx
 /importer:EffectImporter

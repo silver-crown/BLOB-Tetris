@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/GlowEffect.fx</SourceFile>
-  <SourceTime>2024-02-24T22:23:22.6264207+01:00</SourceTime>
+  <SourceTime>2024-02-25T15:03:05.8977553+01:00</SourceTime>
   <DestFile>C:/Users/13sti/source/repos/Monogame Tetris/Monogame Tetris/Content/bin/DesktopGL/GlowEffect.xnb</DestFile>
-  <DestTime>2024-02-24T22:23:27.2574225+01:00</DestTime>
+  <DestTime>2024-02-25T16:25:24.7525988+01:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2022-07-26T13:44:56+02:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

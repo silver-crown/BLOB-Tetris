@@ -31,7 +31,7 @@ namespace Monogame_Tetris
         public void DrawGame(TetrisGame game) {
             _spriteBatch.Begin();
             //if we're pausing, apply a shader that makes everything monochrome
-            if(game.stateMachine.GetState() == StateMachine.States.PAUSE) {
+            if(game.stateMachine.GetState().GetType() == typeof(PauseState)) {
                 _spriteBatch.End();
                 _spriteBatch.Begin(effect: _monochromeEffect);
                 // Apply the shader

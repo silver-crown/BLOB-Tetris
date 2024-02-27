@@ -63,8 +63,8 @@ namespace Monogame_Tetris
 
         protected override void Update(GameTime gameTime) {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            //run the state machine's state, which dictates the behavior of the game
-            stateMachine.RunState(deltaTime, Content);
+            //run the state machine, which dictates the behavior of the game
+            stateMachine.Update(deltaTime, Content);
             base.Update(gameTime);
         }
 

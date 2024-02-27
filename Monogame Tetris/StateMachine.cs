@@ -8,49 +8,28 @@ using System.Threading.Tasks;
 namespace Monogame_Tetris
 {
     public class StateMachine {
-        public enum States {
-            NONE,
-            OPENING,
-            PLAYING,
-            GAMEOVER,
-            PAUSE
-        }
+        private State _currentState;
         private GameplayState _gameplayState;
-        private GameOverState _gameoverState;
-        private PauseState _pausedState;
-        private OpeningScreenState _openingScreenState;
         private TetrisGame _game;
-        States currentState = States.PLAYING;
+        private State _pausedState;
         public StateMachine(TetrisGame game) {
             _game = game;
         }
         public void Initialize() {
             _gameplayState = new GameplayState(_game);
-            _gameoverState = new GameOverState();
-            _pausedState = new PauseState(_game);
-            _openingScreenState = new OpeningScreenState();
+            _currentState = _gameplayState;
         }
-        public void SetState(States state) => currentState = state;
-        public States GetState() => currentState;
+        public void Update(float deltaTime, ContentManager contentManager) {
+            RunState(deltaTime, contentManager, _currentState);
+        } 
 
-        public void RunState(float deltaTime, ContentManager contentManager) {
-            switch (currentState) {
-                case States.NONE:
-                    break;
-                case States.OPENING:
-                    break;
-                case States.PLAYING:
-                    _gameplayState.Execute(deltaTime, contentManager);
-                    break;
-                case States.GAMEOVER:
-
-                    break;
-                case States.PAUSE:
-                    _pausedState.Execute(deltaTime, contentManager);
-                    break;
-            }
-
+        private void RunState(float deltaTime, ContentManager contentManager, State state) {
+            state.Execute(deltaTime, contentManager);
         }
+        public State GetState() => _currentState;
+        public void SetState(State state) => _currentState  = state;
+        public void PauseState(State state) => _pausedState = state;
+        public void ResumeState() => SetState(_pausedState);
     }
 }
 

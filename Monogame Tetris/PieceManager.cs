@@ -34,6 +34,7 @@ namespace Monogame_Tetris
         private bool lineIsGlowing;
         private int loopCount = 0; // the amount of times you want the piece to glow before moving on
         private TetrisBlock tetrisBlock;
+        private bool _gameOver;
 
         private Color[] pieceColors = new Color[]
         {
@@ -204,6 +205,10 @@ namespace Monogame_Tetris
                 int x = (int)block.X + (int)position.X;
                 int y = (int)block.Y + (int)position.Y;
                 if (x < 1 || x >= BoardWidth || y >= BoardHeight || (y >= 0 && gameBoard[x, y].PieceType > 0)) {
+                    //player has reached the top of the board, game over.
+                    //if(y > BoardHeight) {
+                   //     _gameOver = true;
+                    //}
                     return false; // Collision with the game board or boundaries
                 }
             }
@@ -358,6 +363,7 @@ namespace Monogame_Tetris
         public GameBoardCell[,] GetGameBoard() => gameBoard;
         public Color[] GetPieceColors() => pieceColors;
         public void SetFallSpeed(float fallSpeed) => FallSpeed = fallSpeed;
+        public bool GetGameOverStatus() => _gameOver;
     }
 
 }

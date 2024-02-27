@@ -43,8 +43,12 @@ namespace Monogame_Tetris
 
             KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(Keys.Escape) && !escapePressedLastFrame) {
-                    _game.stateMachine.SetState(StateMachine.States.PAUSE);
+                    _game.stateMachine.PauseState(this);
+                    _game.stateMachine.SetState(new PauseState(_game));
                     _playingTetrisSong = false;
+            }
+            if(_game.pieceManager.GetGameOverStatus() == true) {
+                _game.stateMachine.SetState(new GameOverState());
             }
             _game.inputManager.timeSinceLastMovement += deltaTime;
             _game.pieceManager.LineClearGlow(deltaTime);

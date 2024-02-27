@@ -26,7 +26,7 @@ namespace Monogame_Tetris
         public void Update(float deltaTime) {
             KeyboardState state = Keyboard.GetState();
             if (state.IsKeyDown(Keys.Escape) && !escapePressedLastFrame) {
-                _game.stateMachine.SetState(StateMachine.States.PLAYING);
+                _game.stateMachine.ResumeState();
                 playedPauseSound = false;
             }
             escapePressedLastFrame = state.IsKeyDown(Keys.Escape);

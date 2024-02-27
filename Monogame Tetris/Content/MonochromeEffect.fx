@@ -26,10 +26,8 @@ struct VertexShaderOutput
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
     float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+    //make everything monochrome
     color.rgb = (color.r + color.g + color.b) / 3.0f;
-        // Adjust the intensity to create the glow effect
-    float intensity = 2.0; // Adjust this value to control the glow intensity
-    color.rgb *= intensity;
     return color;
 }
 

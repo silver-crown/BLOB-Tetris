@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Content;
+using System.Reflection.Emit;
 
 namespace Monogame_Tetris
 {
@@ -265,19 +266,19 @@ namespace Monogame_Tetris
                 default:
                     break;
                 case 1:
-                    _game.SetPlayerScore(40);
+                    _game.IncreasePlayerScore(40);
                     soundManager.PlaySoundEffect(soundManager.drOakWonderful);
                     break;
                 case 2:
-                    _game.SetPlayerScore(100);
+                    _game.IncreasePlayerScore(100);
                     soundManager.PlaySoundEffect(soundManager.drOakWonderful);
                     break;
                 case 3:
-                    _game.SetPlayerScore(300);
+                    _game.IncreasePlayerScore(300);
                     soundManager.PlaySoundEffect(soundManager.drOakWellDone);
                     break;
                 case 4:
-                    _game.SetPlayerScore(1200);
+                    _game.IncreasePlayerScore(1200);
                     soundManager.PlaySoundEffect(soundManager.drOakPerfect);
                     break;
             }
@@ -319,6 +320,31 @@ namespace Monogame_Tetris
             }
             if (!lineIsGlowing)
                 _game.inputManager.ProcessInput();
+        }
+
+        //logic for moving to the next level and increasing fallspeed
+        public void LevelLogic() {
+            switch (_game.GetLinesCleared()) {
+                default:
+                    SetFallSpeed(0.5f);
+                    break;
+                case var _ when _game.GetLinesCleared() >= 20:
+                    SetFallSpeed(0.07f);
+                    _game.SetLevel(5);
+                    break;
+                case var _ when _game.GetLinesCleared() >= 15:
+                    SetFallSpeed(0.1f);
+                    _game.SetLevel(4);
+                    break;
+                case var _ when _game.GetLinesCleared() >= 10:
+                    SetFallSpeed(0.2f);
+                    _game.SetLevel(3);
+                    break;
+                case var _ when _game.GetLinesCleared() >= 5:
+                    SetFallSpeed(0.3f);
+                    _game.SetLevel(2);
+                    break;
+            }
         }
         public List<Vector2> GetCurrentPiece() => currentPiece;
         public Vector2 GetCurrentPiecePosition() => currentPiecePosition;

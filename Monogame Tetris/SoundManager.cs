@@ -11,6 +11,7 @@ namespace Monogame_Tetris
         public SoundEffect drOakWonderful;
         public SoundEffect drOakWellDone;
         public SoundEffect drOakPerfect;
+        public SoundEffect ZA_WARUDO;
 
         public SoundManager(ContentManager c) {
             _contentManager = c;
@@ -20,6 +21,7 @@ namespace Monogame_Tetris
             drOakWonderful = _contentManager.Load<SoundEffect>("drOakWonderful");
             drOakWellDone = _contentManager.Load<SoundEffect>("drOakwell-done");
             drOakPerfect = _contentManager.Load<SoundEffect>("drOakPerfect");
+            ZA_WARUDO = _contentManager.Load<SoundEffect>("ZA_WARUDO");
         }
 
         public void PlaySong(Song song, float volume, bool isRepeating) {
@@ -29,6 +31,9 @@ namespace Monogame_Tetris
         }
         public void PlaySoundEffect(SoundEffect soundEffect) {
             soundEffect.Play(volume: 1f, pitch: 0.0f, pan: 0.0f);
+        }
+        public void StopSong() {
+            MediaPlayer.Stop();
         }
     }
 }

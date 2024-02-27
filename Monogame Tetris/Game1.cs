@@ -23,17 +23,17 @@ namespace Monogame_Tetris
         private int playerScore;
 
         private int level = 1;
-    
 
+        public StateMachine stateMachine;
         public GameRenderer gameRenderer;
         public PieceManager pieceManager;
         public SoundManager soundManager;
         public InputManager inputManager;
 
         public int GetPlayerScore() => playerScore;
-        public int SetPlayerScore(int i) => playerScore += i;
+        public int IncreasePlayerScore(int i) => playerScore += i;
         public int GetLevel() => level;
-        public int SetLevel(int i) => level += i;
+        public int SetLevel(int i) => level = i;
         public int GetLinesCleared() => linesCleared;
         public void IncreaseLinesCleared() => linesCleared++;
 
@@ -47,7 +47,8 @@ namespace Monogame_Tetris
         }
 
         protected override void Initialize() {
-         
+            stateMachine = new StateMachine(this);
+            stateMachine.Initialize();
             random = new Random();
             base.Initialize();
         }
@@ -55,59 +56,22 @@ namespace Monogame_Tetris
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             soundManager = new SoundManager(Content);
-            soundManager.LoadContent();
             pieceManager = new PieceManager(Content, this);
-            pieceManager.LoadContent();
-            soundManager.PlaySong(soundManager.tetrisMusic,0.5f,true);
             inputManager = new InputManager(this);
             gameRenderer = new GameRenderer(_spriteBatch);
-            gameRenderer.LoadContent(Content);
-            pieceManager.ShowNextPiece();
-            pieceManager.SpawnNewPiece();
         }
 
         protected override void Update(GameTime gameTime) {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            inputManager.timeSinceLastMovement += deltaTime;
-            pieceManager.LineClearGlow(deltaTime);
-            pieceManager.GravityAndInputLogic(deltaTime);
-            
-            LevelLogic();
-
+            //run the state machine's state, which dictates the behavior of the game
+            stateMachine.RunState(deltaTime, Content);
             base.Update(gameTime);
         }
-        //logic for moving to the next level and increasing fallspeed
-        void LevelLogic() {
-            switch (linesCleared) {
-                default:
-                    pieceManager.SetFallSpeed(0.5f);
-                    break;
-                case var _ when linesCleared >= 20:
-                    pieceManager.SetFallSpeed(0.07f);
-                    level = 5;
-                    break;
-                case var _ when linesCleared >= 15:
-                    pieceManager.SetFallSpeed(0.1f);
-                    level = 4;
-                    break;
-                case var _ when linesCleared >= 10:
-                    pieceManager.SetFallSpeed(0.2f);
-                    level = 3;
-                    break;
-                case var _ when linesCleared >= 5:
-                    pieceManager.SetFallSpeed(0.3f);
-                    level = 2;
-                    break;
-            }
-        }
+
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            
-            _spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.Black);    
             // draw the game board
             gameRenderer.DrawGame(this);
-
-            _spriteBatch.End();
             base.Draw(gameTime);
         }
     }

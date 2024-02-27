@@ -11,6 +11,7 @@ namespace Monogame_Tetris
         private const int _boardHeight = 20;
         private float _blockSize = 40.0f;
         private Effect _glowEffect;
+        private Effect _monochromeEffect;
         public Texture2D blockTexture;
         public Texture2D backgroundImage;
 
@@ -21,12 +22,21 @@ namespace Monogame_Tetris
    
         public void LoadContent(ContentManager c) {
             _glowEffect = c.Load<Effect>("GlowEffect");
+            _monochromeEffect = c.Load<Effect>("MonochromeEffect");
             blockTexture = c.Load<Texture2D>("block");
             backgroundImage = c.Load<Texture2D>("purpleCastleBackground");
         }
         
 
         public void DrawGame(TetrisGame game) {
+            _spriteBatch.Begin();
+            //if we're pausing, apply a shader that makes everything monochrome
+            if(game.stateMachine.GetState() == StateMachine.States.PAUSE) {
+                _spriteBatch.End();
+                _spriteBatch.Begin(effect: _monochromeEffect);
+                // Apply the shader
+                DrawPauseScreen(game);
+            }
             DrawGameBackground(); 
             DrawGameBoard(game);
             DrawGameBorders();
@@ -36,6 +46,7 @@ namespace Monogame_Tetris
             DrawPlayerScore(game);
             DrawCurrentLevel(game);
             DrawNumberOfLinesCleared(game);
+            _spriteBatch.End();
         }
        
         private void DrawGameBackground() {
@@ -176,6 +187,15 @@ namespace Monogame_Tetris
               game.Content.Load<SpriteFont>("default font"),
               $"Lines cleared: " + game.GetLinesCleared(),
               new Vector2(600 + _boardWidth, _boardHeight + 100),
+              Color.White);
+        }
+
+        private void DrawPauseScreen(TetrisGame game) {
+            //Draw number of lines cleared
+            _spriteBatch.DrawString(
+              game.Content.Load<SpriteFont>("default font"),
+              $"PAUSED",
+              new Vector2( 200, 250),
               Color.White);
         }
     }

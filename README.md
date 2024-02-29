@@ -2,8 +2,8 @@
 
 This is a tetris game made in C# using the monogame framework as a base, without any external game engines. It also used HLSL for shader code.
 This project was done as a personal, rapid prototyping personal challenge and completed in 3 days. All commits beyond the basic gameplay are quality of life features I've added for fun 
-including glow effects for cleared pieces, and drawing the game in monochrome when paused. 
-
+including glow effects for cleared pieces, and drawing the game in monochrome when paused.
+In the future the game might get "BLOB" themed artwork and themes to better suit the name of the repository.
 ## Prerequisites
 
 Before you begin, make sure you have the monogame framework installed on your computer, if not then the project will not run. In the future I may include a pre-compiled executable in the project that
